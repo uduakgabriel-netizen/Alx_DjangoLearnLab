@@ -1,0 +1,43 @@
+from django.db import models
+
+# Create your models here.
+# name: models.CharField(_(""), max_length=50)
+# title: modlels.models.CharField(_(""), max_length=50)
+# author: models.ForeignKey("app.Model", verbose_name=_(""), on_delete=models.CASCADE)
+
+# from django.db import models
+
+
+
+# Register your models here.
+
+# Autho model.....
+
+class Author(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='books')
+
+    def __str__(self):
+        return self.title
+    
+
+class Library(models.Model):
+    name = models.CharField(max_length=100)
+    books = models.ManyToManyField(Book, related_name='libraries')
+
+    def __str__(self):
+        return self.name
+    
+
+class Librarian(models.Model):
+    name = models.CharField(max_length=100)
+    library = models.OneToOneField(Library, on_delete=models.CASCADE, related_name='librarian')
+
+    def __str__(self):
+        return self.name
