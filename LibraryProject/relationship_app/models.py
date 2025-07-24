@@ -1,9 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-Create your models here.
-name: models.CharField(_(""), max_length=50)
-title: modlels.models.CharField(_(""), max_length=50)
-author: models.ForeignKey("app.Model", verbose_name=_(""), on_delete=models.CASCADE)
+# Create your models here.
+# name: models.CharField(_(""), max_length=50)
+# title: modlels.models.CharField(_(""), max_length=50)
+# author: models.ForeignKey("app.Model", verbose_name=_(""), on_delete=models.CASCADE)
 
 # from django.db import models
 
