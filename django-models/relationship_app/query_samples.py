@@ -2,6 +2,11 @@
 
 from relationship_app.models import Author, Book, Library, Librarian
 
+library = Library.objects.get(name=library_name)
+library_books = library.books.all()
+    
+
+
 def create_sample_data():
     print("--- Creating Sample Data ---")
 
