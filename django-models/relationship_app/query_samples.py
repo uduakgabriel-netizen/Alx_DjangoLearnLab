@@ -23,6 +23,12 @@ def create_sample_data():
     library1 = Library.objects.create(name="Central City Library")
     library2 = Library.objects.create(name="University Archives")
     print(f"Created libraries: {library1.name}, {library2.name}")
+    
+    # getting data from the libraries
+    
+    library = Library.objects.get(name=library_name)
+    library_books = library.books.all()
+    
 
     # Add Books to Libraries (ManyToManyField)
     library1.books.add(book1, book2, book3)
