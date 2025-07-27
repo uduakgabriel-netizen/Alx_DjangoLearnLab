@@ -1,62 +1,96 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from bookshelf.models import CustomUser
 
 # Create your models here.
-# name: models.CharField(_(""), max_length=50)
-# title: modlels.models.CharField(_(""), max_length=50)
-# author: models.ForeignKey("app.Model", verbose_name=_(""), on_delete=models.CASCADE)
 
-# from django.db import models
+# class UserManager(BaseUserManager):
+#     # method to handle user creation
+#     def create_user(self, username, first_name, last_name, email, password=None):
+#         if not username:
+#             raise ValueError('Username is required')
+        
+#         if not email:
+#             raise ValueError('Email is required')
+        
+#         user = self.model(
+#             email=self.normalize_email(email),
+#             username=username,
+#             first_name=first_name,
+#             last_name=last_name
+#         )
 
+#         user.set_password(password)
+#         # save to default database configured
+#         user.save(using=self._db)
+#         return user
 
+#     # method to handle superuser creation
+#     def create_superuser(self, username, first_name, last_name, email, password=None):
+#         user = self.create_user(
+#             email=self.normalize_email(email),
+#             username=username,
+#             first_name=first_name,
+#             last_name=last_name,
+#             password=password
+#         )
 
-# Register your models here.
+#         user.is_admin = True
+#         user.is_active = True
+#         user.is_staff = True
+#         user.is_superadmin = True
 
-# Autho model.....
+#         # save to default database configured
+#         user.save(using=self._db)
+#         return user
+
+# class CustomUser(AbstractUser):
+#     date_of_birth = models.DateField()
+#     profile_photo = models.ImageField(upload_to='gallery')
 
 class Author(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
-# Book model with a foreign key relationship to Author
-# Library model with a many-to-many relationship to Book
+
 class Book(models.Model):
-    title = models.CharField(max_length=200)
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='books')
-    
+    title = models.CharField(max_length=100)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+
     class Meta:
         permissions = [
-            ("can_add_book", "Can add book"),
-            ("can_change_book", "Can change book"),
-            ("can_delete_book", "Can delete book"),
+            ('can_add_book', 'Can Add Book'),
+            ('can_change_book', 'Can Change Book')
         ]
 
     def __str__(self):
         return self.title
-    
 
 class Library(models.Model):
     name = models.CharField(max_length=100)
-    books = models.ManyToManyField(Book, related_name='libraries')
+    book = models.ManyToManyField(Book)
 
     def __str__(self):
         return self.name
-    
 
 class Librarian(models.Model):
     name = models.CharField(max_length=100)
-    library = models.OneToOneField(Library, on_delete=models.CASCADE, related_name='librarian')
+    labrary = models.OneToOneField(Library, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
-
+    
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=20, choices=[('Admin', 'Admin'), ('Librarian', 'Librarian'), ('Member', 'Member')])
+    ROLE_CHOICES = [
+        ('Admin', 'Admin'),
+        ('Librarian', 'Librarian'),
+        ('Member', 'Member')
+    ]
+
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    role = models.CharField(choices=ROLE_CHOICES)
 
     def __str__(self):
-        return f"{self.user.username} - {self.role}"
-    
-    
+        return self.user.username
     
