@@ -18,7 +18,10 @@
 
 from rest_framework import viewsets
 from .models import Book
-from .serializers import BookSerialize
+from .serializers import BookSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 class BookViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows books to be viewed, created, edited, or deleted.
@@ -28,3 +31,10 @@ class BookViewSet(viewsets.ModelViewSet):
     
     
     serializer_class = BookSerializer
+
+
+class BookList(APIView):
+    def get(self, request):
+        books = Book.objects.all()
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data)
