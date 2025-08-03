@@ -19,6 +19,7 @@
 from rest_framework import viewsets
 from .models import Book
 from .serializers import BookSerializer
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -38,3 +39,26 @@ class BookList(APIView):
         books = Book.objects.all()
         serializer = BookSerializer(books, many=True)
         return Response(serializer.data)
+    
+    
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    A viewset that provides the standard actions for User.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    
+    
+class AdminOnlyView(APIView):
+    
+    permission_classes = [IsAdminUser]
+
+    """
+    A view that can only be accessed by admin users.
+    """
+    
+     def get(self, request):
+        content = {'message': 'This is a secret message for administrators.'}
+        return Response(content)
+    
+    
