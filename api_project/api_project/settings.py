@@ -42,6 +42,26 @@ INSTALLED_APPS = [
     'rest_framework.authtoken'
 ]
 
+REST_FRAMEWORK = {
+    # Set the default authentication classes for the entire project
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication', # Optional, good for browsable API
+    ],
+    # You can also set a default permission class for the entire project
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ]
+}
+
+# Add this to your settings to manage authentication.
+AUTH_USER_MODEL = 'auth.User'
+
+
+
+
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -126,8 +146,3 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-}
