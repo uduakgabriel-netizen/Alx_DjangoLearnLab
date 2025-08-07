@@ -1,0 +1,1 @@
+new_book = Book.objects.create(title='George Orwell', author='Nineteen Eighty-Four', publication_year=1984)
