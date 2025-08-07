@@ -3,7 +3,7 @@ from django.db import models
 # this is my models.py file for the advanced API project
 
 
-class AuthorModel(models.Model):
+class Author(models.Model):
     name = models.CharField(max_length = 100)
     
     
@@ -11,7 +11,7 @@ class AuthorModel(models.Model):
         return self.name
     
     
-class BookModel(models.Model):
+class Book(models.Model):
     title = models.CharField(max_length = 100)
     publication_year = models.IntegerField()
     author = models.ForeignKey(AuthorModel, on_delete=models.CASCADE)
