@@ -1,10 +1,11 @@
 from django.db import models
 
-
+# this is my models.py file for the advanced API project
 
 
 class AuthorModel(models.Model):
     name = models.CharField(max_length = 100)
+    
     
     def __str__(self):
         return self.name
