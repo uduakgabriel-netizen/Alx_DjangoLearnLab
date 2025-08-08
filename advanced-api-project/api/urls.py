@@ -2,10 +2,12 @@ from django.contrib import admin
 from django.urls import path
 from api.views import BookListView, BookDetailView, BookCreateView, BookUpdateView, BookDeleteView
 from .views import BookListCreateView, BookDetailUpdateDeleteView
+from django.urls import include, re_path
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('api.urls')),  # Include the API URLs
     path('books/', BookListView.as_view(), name='book-list'),
     path('books/<int:pk>/', BookDetailView.as_view(), name='book-detail'),
     path('books/create/', BookCreateView.as_view(), name='book-create'),

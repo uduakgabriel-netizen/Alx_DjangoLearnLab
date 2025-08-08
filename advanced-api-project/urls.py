@@ -20,7 +20,7 @@ from api.views import BookListView, BookDetailView, BookCreateView, BookUpdateVi
 from .views import BookListCreateView, BookDetailUpdateDeleteView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('api', include('api.urls')),  # Include the API URLs
     path('books/', BookListView.as_view(), name='book-list'),
     path('books/<int:pk>/', BookDetailView.as_view(), name='book-detail'),
