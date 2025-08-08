@@ -3,7 +3,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from .models import Book, Author
 from django.contrib.auth.mixins import LoginRequiredMixin
-from rest_framework.permissions import IsAuthenticated,IsauthenticatedOrReadOnly, authenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+# from rest_framework.permissions import IsAuthenticated,IsauthenticatedOrReadOnly, authenticated
 # from django.contrib.auth.mixins import UserPassesTestMixin
 
 
