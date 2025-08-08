@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Book, Author
-from django contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class BookListView(ListView):
@@ -13,7 +13,7 @@ class BookListView(ListView):
 class BookDetailView(DetailView):
     model = Book
     template_name = 'book_detail.html'
-    context_object_name = 'book'
+    context_object_name = 'books'
     
 class BookCreateView(CreateView):
     model = Book
