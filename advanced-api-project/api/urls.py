@@ -23,21 +23,33 @@
 
 
 
+# from django.urls import path
+# from .views import (
+#     BookListView,
+#     BookDetailView,
+#     BookCreateView,
+#     BookUpdateView,
+#     BookDeleteView,
+# )
+
+# urlpatterns = [
+#     path('books/', BookListView.as_view(), name='book_list'),
+#     path('books/<int:pk>/', BookDetailView.as_view(), name='book_detail'),
+#     path('books/new/', BookCreateView.as_view(), name='book_create'),
+#     # This is the path for the update view, it requires a primary key.
+#     path('books/<int:pk>/update/', BookUpdateView.as_view(), name='book_update'),
+#     # This is the path for the delete view, it also requires a primary key.
+#     path('books/<int:pk>/delete/', BookDeleteView.as_view(), name='book_delete'),
+# ]
+
+
 from django.urls import path
-from .views import (
-    BookListView,
-    BookDetailView,
-    BookCreateView,
-    BookUpdateView,
-    BookDeleteView,
-)
+from .views import BookListCreateView, BookDetailUpdateDeleteView
 
 urlpatterns = [
-    path('books/', BookListView.as_view(), name='book_list'),
-    path('books/<int:pk>/', BookDetailView.as_view(), name='book_detail'),
-    path('books/new/', BookCreateView.as_view(), name='book_create'),
-    # This is the path for the update view, it requires a primary key.
-    path('books/<int:pk>/update/', BookUpdateView.as_view(), name='book_update'),
-    # This is the path for the delete view, it also requires a primary key.
-    path('books/<int:pk>/delete/', BookDeleteView.as_view(), name='book_delete'),
+    # GET: List all books. POST: Create a new book.
+    path('books/', BookListCreateView.as_view(), name='book_list_create'),
+    
+    # GET: Retrieve a book. PUT/PATCH: Update a book. DELETE: Delete a book.
+    path('books/<int:pk>/', BookDetailUpdateDeleteView.as_view(), name='book_detail_update_delete'),
 ]
