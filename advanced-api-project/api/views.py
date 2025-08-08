@@ -8,6 +8,7 @@ from.filters import BookFilter
 from rest_framework import generics, filters
 from serializer import BookSerializer
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework
 # from rest_framework import 
 # from rest_framework.permissions import IsAuthenticated,IsauthenticatedOrReadOnly, authenticated
 # from django.contrib.auth.mixins import UserPassesTestMixin
