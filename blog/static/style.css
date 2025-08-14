@@ -1,28 +1,45 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+/* Basic reset */
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    box-sizing: border-box;
 }
 
-.container {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    padding: 10px;
     text-align: center;
 }
 
-h1 {
-    color: #333;
-    margin-bottom: 15px;
+header nav ul {
+    list-style-type: none;
 }
 
-p {
-    color: #666;
-    line-height: 1.6;
+header nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.content {
+    margin: 20px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 10px;
+    background-color: #333;
+    color: white;
 }
