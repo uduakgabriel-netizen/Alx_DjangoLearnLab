@@ -40,3 +40,19 @@ class PostForm(forms.ModelForm):
 #     class Meta:
 #         model = Post  # Link this form to the Post model
 #         fields = ['title', 'content']
+
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        # Only include the 'content' field for user input.
+        # 'post', 'author', 'created_at', 'updated_at' will be handled automatically by the view/model.
+        fields = ['content']
+        # Optional: Add widgets for better control over form field appearance.
+        # Here, we use a Textarea with specified rows and a placeholder.
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Write your comment here...'}),
+        }
+
+

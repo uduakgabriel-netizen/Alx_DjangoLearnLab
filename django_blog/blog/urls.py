@@ -18,4 +18,15 @@ urlpatterns = [
     path('post/new/', PostCreateView.as_view(), name='post-create'),  #
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),  # Update an existing post
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),  # Delete a post
+    
+     # New Comment URLs
+    # URL for creating a new comment for a specific post.
+    # <int:post_pk> captures the primary key of the post the comment belongs to.
+    path('posts/<int:post_pk>/comments/new/', CommentCreateView.as_view(), name='comment-create'),
+    # URL for editing an existing comment.
+    # <int:pk> captures the primary key of the comment itself.
+    path('comments/<int:pk>/edit/', CommentUpdateView.as_view(), name='comment-update'),
+    # URL for deleting an existing comment.
+    # <int:pk> captures the primary key of the comment itself.
+    path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
 ]

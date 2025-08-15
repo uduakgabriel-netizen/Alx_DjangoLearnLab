@@ -68,6 +68,14 @@ class PostListView(ListView):
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html' # Default: <app>/<model>_detail.html
+    
+     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Retrieve all comments related to the current post, ordered by creation time
+        context['comments'] = self.object.comments.all()
+        # Add a blank CommentForm instance to the context for new comments
+        context['comment_form'] = CommentForm()
+        return context
 
 # Create a new blog post
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -105,3 +113,102 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         # Ensure only the author can delete their post
         post = self.get_object()
         return self.request.user == post.author
+
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    # We don't need a separate template for the form, as it's embedded in post_detail.html
+    # This template_name is effectively a fallback, but not directly used for the primary flow.
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        # Automatically set the author of the comment to the currently logged-in user
+        form.instance.author = self.request.user
+        
+        # Get the 'post_pk' from the URL parameters (defined in urls.py)
+        post_pk = self.kwargs.get('post_pk')
+        # Fetch the Post object based on the post_pk, or raise a 404 if not found
+        form.instance.post = get_object_or_404(Post, pk=post_pk)
+        
+        # Display a success message to the user
+        messages.success(self.request, 'Your comment has been posted!')
+        # Call the parent class's form_valid method to save the form instance
+        return super().form_valid(form)
+
+    # After a successful comment creation, redirect back to the post's detail page
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'pk': self.kwargs.get('post_pk')})
+    
+    
+    class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html' # Reusing the form template
+
+    def form_valid(self, form):
+        # Display a success message after updating
+        messages.success(self.request, 'Your comment has been updated!')
+        # Call the parent class's form_valid method to save the form instance
+        return super().form_valid(form)
+
+    def test_func(self):
+        # Get the comment object that is currently being updated
+        comment = self.get_object()
+        # Return True if the logged-in user is the author of the comment, otherwise False
+        return self.request.user == comment.author
+
+    def get_success_url(self):
+        # After a successful comment update, redirect back to the associated post's detail page
+        return reverse('post-detail', kwargs={'pk': self.object.post.pk})
+
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html' # Separate template for confirmation
+
+    def test_func(self):
+        # Get the comment object that is currently being deleted
+        comment = self.get_object()
+        # Return True if the logged-in user is the author of the comment, otherwise False
+        return self.request.user == comment.author
+
+    def get_success_url(self):
+        # After a successful comment deletion, redirect back to the associated post's detail page
+        messages.success(self.request, 'Your comment has been deleted!')
+        # Using reverse_lazy because the URL might not be available until the project's URLconf is fully loaded
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html' # Separate template for confirmation
+
+    def test_func(self):
+        # Get the comment object that is currently being deleted
+        comment = self.get_object()
+        # Return True if the logged-in user is the author of the comment, otherwise False
+        return self.request.user == comment.author
+
+    def get_success_url(self):
+        # After a successful comment deletion, redirect back to the associated post's detail page
+        messages.success(self.request, 'Your comment has been deleted!')
+        # Using reverse_lazy because the URL might not be available until the project's URLconf is fully loaded
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html' # Separate template for confirmation
+
+    def test_func(self):
+        # Get the comment object that is currently being deleted
+        comment = self.get_object()
+        # Return True if the logged-in user is the author of the comment, otherwise False
+        return self.request.user == comment.author
+
+    def get_success_url(self):
+        # After a successful comment deletion, redirect back to the associated post's detail page
+        messages.success(self.request, 'Your comment has been deleted!')
+        # Using reverse_lazy because the URL might not be available until the project's URLconf is fully loaded
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+
