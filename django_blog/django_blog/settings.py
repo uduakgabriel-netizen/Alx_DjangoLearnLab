@@ -80,8 +80,14 @@ WSGI_APPLICATION = 'django_blog.wsgi.application'
 
 DATABASES = {
     'default': {
+        'PORT': '8000',  # Leave empty for default port
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',  # Use SQLite for development; replace with your database settings for productio
+        'ENGINE': 'django.db.backends.postgresql', # Uncomment for PostgreSQL
+        # 'NAME': 'your_db_name', # Replace with your database name
+        # 'PASSWORD': 'your_db_password', # Replace with your database password
+        # 'HOST': 'localhost
+        # 'PORT': '', # Leave empty for default port
     }
 }
 
