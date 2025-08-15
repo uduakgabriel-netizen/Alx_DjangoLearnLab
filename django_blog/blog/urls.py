@@ -23,12 +23,16 @@ urlpatterns = [
     # URL for creating a new comment for a specific post.
     # <int:post_pk> captures the primary key of the post the comment belongs to.
     path('posts/<int:post_pk>/comments/new/', CommentCreateView.as_view(), name='comment-create'),
+    path('posts/<int:post_pk>/comments/', CommentListView.as_view(), name='comment-list'),
+    path('posts/<int:post_pk>/comments/<int:pk>/', CommentDetailView.as_view(), name='comment-detail'),
+    path('posts/<int:post_pk>/comments/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'),
+    path('posts/<int:post_pk>/comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
     # URL for editing an existing comment.
     # <int:pk> captures the primary key of the comment itself.
     path('comments/<int:pk>/edit/', CommentUpdateView.as_view(), name='comment-update'),
     # URL for deleting an existing comment.
     # <int:pk> captures the primary key of the comment itself.
-    path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
-    path('comments/<int:pk>/detail/', CommentDetailView.as_view(), name='comment-detail'),
-    patgh('comments/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'),
-]
+#     path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
+#     path('comments/<int:pk>/detail/', CommentDetailView.as_view(), name='comment-detail'),
+#     patgh('comments/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'),
+# ]
