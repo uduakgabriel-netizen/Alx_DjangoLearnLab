@@ -1,0 +1,1 @@
+new_book = Book.objects.get('1984')
