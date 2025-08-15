@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 max-w-4xl bg-white rounded-lg shadow-xl mt-10">
+    <article class="prose lg:prose-lg mx-auto">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-4">{{ post.title }}</h1>
+        <div class="flex items-center text-sm text-gray-600 mb-6 border-b pb-4">
+            <img class="w-10 h-10 rounded-full object-cover mr-3 border border-blue-300" src="{{ post.author.profile.image.url }}" alt="{{ post.author.username }}'s Profile Picture">
+            <span>By <a href="#" class="font-medium text-blue-600 hover:underline">{{ post.author.username }}</a> on {{ post.date_posted|date:"F d, Y" }}</span>
+        </div>
+        <div class="text-gray-800 leading-relaxed mb-8">
+            {{ post.content|linebreaksbr }} {# Renders line breaks from the textarea #}
+        </div>
+        {# Actions for the author #}
+        {% if user.is_authenticated and user.id == post.author.id %}
+            <div class="flex justify-end space-x-4 mt-8 pt-4 border-t">
+                <a href="{% url 'post-update' post.pk %}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-200 transform hover:scale-105">
+                    Update
+                </a>
+                <a href="{% url 'post-delete' post.pk %}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition duration-200 transform hover:scale-105">
+                    Delete
+                </a>
+            </div>
+        {% endif %}
+    </article>
+</div>
+{% endblock %}
