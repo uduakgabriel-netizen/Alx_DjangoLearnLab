@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 max-w-md bg-white rounded-lg shadow-xl mt-10 animate-slide-in-up">
+    <h2 class="text-3xl font-bold text-center mb-6 text-gray-800">Log In</h2>
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            Log In
+        </button>
+    </form>
+    <div class="text-center mt-6 text-gray-600">
+        Don't have an account? <a href="{% url 'register' %}" class="text-blue-600 hover:underline font-medium">Register Here</a>
+    </div>
+    <div class="text-center mt-3 text-gray-600">
+        <a href="{% url 'password_reset' %}" class="text-blue-600 hover:underline font-medium">Forgot password?</a>
+    </div>
+</div>
+
+<style>
+    @keyframes slideInUp {
+        from { opacity: 0; transform: translateY(50px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-slide-in-up {
+        animation: slideInUp 0.7s ease-out forwards;
+    }
+</style>
+{% endblock %}

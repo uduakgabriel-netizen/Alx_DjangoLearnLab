@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 max-w-2xl bg-white rounded-lg shadow-xl mt-10 animate-fade-in">
+    <h2 class="text-3xl font-bold text-center mb-6 text-gray-800">Your Profile</h2>
+
+    <div class="flex flex-col items-center mb-8">
+        <img class="w-40 h-40 rounded-full object-cover border-4 border-blue-500 shadow-md mb-4 transform transition-transform duration-300 hover:scale-105" src="{{ user.profile.image.url }}" alt="Profile Picture">
+        <h3 class="text-2xl font-semibold text-gray-800 mb-1">{{ user.username }}</h3>
+        <p class="text-md text-gray-600">{{ user.email }}</p>
+        {% if user.profile.bio %}
+            <p class="text-sm text-gray-700 mt-2 text-center max-w-prose">{{ user.profile.bio }}</p>
+        {% endif %}
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        <fieldset class="form-group mb-6 p-5 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+            <legend class="text-xl font-bold text-gray-700 mb-4 px-2 py-1 bg-white rounded-md inline-block -ml-2 -mt-2">User Information</legend>
+            {{ user_form|crispy }}
+        </fieldset>
+        <fieldset class="form-group mb-6 p-5 border border-gray-200 rounded-lg shadow-sm bg-gray-50">
+            <legend class="text-xl font-bold text-gray-700 mb-4 px-2 py-1 bg-white rounded-md inline-block -ml-2 -mt-2">Profile Details</legend>
+            {{ profile_form|crispy }}
+        </fieldset>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-md">
+            Update Profile
+        </button>
+    </form>
+</div>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+</style>
+{% endblock %}

@@ -1,17 +1,44 @@
-from django.shortcuts import render
+# blog/views.py
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm
+from .models import Profile # Importing Profile from blog.models
 
-from django.shortcuts import render
-# You might need to import your Post model later, but not for this basic view
-# from .models import Post
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Account created for {username}! You can now log in.')
+            return redirect('login')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in {field}: {error}")
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
 
-def home_view(request):
-    """
-    Renders the blog homepage template.
-    This function handles requests to the blog's root URL.
-    """
-    # The render() function takes:
-    # 1. The request object
-    # 2. The template path (Django will look in blog/templates/blog/index.html due to APP_DIRS=True)
-    # 3. A dictionary of context variables (optional, but good practice to include if passing data)
-    return render(request, 'blog/index.html', {})
-# Create your views here.
+@login_required
+def profile_view(request):
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile has been updated!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form
+    }
+    return render(request, 'blog/profile.html', context) # Template path adjusted

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 bg-white rounded-lg shadow-xl mt-10 text-center animate-fade-in">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-6 leading-tight">Welcome to the <span class="text-blue-600">Django Blog</span>!</h1>
+    {% if user.is_authenticated %}
+        <p class="text-lg md:text-xl text-gray-700 mb-4">Hello, <span class="font-semibold text-blue-700">{{ user.username }}</span>! You are logged in.</p>
+        <p class="mt-6 text-gray-600 text-base md:text-lg">
+            Dive into our latest blog posts or update your <a href="{% url 'profile' %}" class="text-blue-600 hover:underline font-medium">profile</a>.
+        </p>
+    {% else %}
+        <p class="text-lg md:text-xl text-gray-700 mb-6">
+            Please <a href="{% url 'login' %}" class="text-blue-600 hover:underline font-medium">log in</a> or <a href="{% url 'register' %}" class="text-blue-600 hover:underline font-medium">register</a> to unlock all features.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-8">
+            <a href="{% url 'login' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg">
+                Log In
+            </a>
+            <a href="{% url 'register' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg">
+                Register
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+</style>
+{% endblock %}

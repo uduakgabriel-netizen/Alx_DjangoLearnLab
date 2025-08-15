@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Logged Out{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 max-w-md bg-white rounded-lg shadow-xl mt-10 text-center animate-fade-in-scale">
+    <h2 class="text-3xl font-bold mb-4 text-gray-800">You have been logged out.</h2>
+    <p class="text-lg text-gray-600 mb-6">
+        Thank you for visiting! We hope to see you back soon.
+    </p>
+    <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+        <a href="{% url 'login' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg">
+            Log In Again
+        </a>
+        <a href="{% url 'home' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg">
+            Go to Home
+        </a>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.9) translateY(20px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .animate-fade-in-scale {
+        animation: fadeInScale 0.8s ease-out forwards;
+    }
+</style>
+{% endblock %}
