@@ -34,8 +34,8 @@ urlpatterns = [
     # <int:pk> captures the primary key of the comment itself.
     path('comments/<int:pk>/edit/', CommentUpdateView.as_view(), name='comment-update'),
     # URL for deleting an existing comment.
-    # <int:pk> captures the primary key of the comment itself.
-#     path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
-#     path('comments/<int:pk>/detail/', CommentDetailView.as_view(), name='comment-detail'),
-#     patgh('comments/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'),
+    <int:pk> captures the primary key of the comment itself.
+    path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
+    path('comments/<int:pk>/detail/', CommentDetailView.as_view(), name='comment-detail'),
+    patgh('comments/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'),
 ]
