@@ -9,7 +9,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')), # Django's built-in auth URLs (login, logout, password reset, etc.)
     path('accounts/', include('blog.urls')), # Your app's custom user URLs (for register and profile)
-    path('', TemplateView.as_view(template_name='home.html'), name='home'), # Simple home page
+    path('', TemplateView.as_view(template_name='index.html'), name='index'), # Simple home page
 ]
 
 # For serving media files during development
