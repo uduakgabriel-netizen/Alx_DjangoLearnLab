@@ -6,7 +6,10 @@ from .views import  (
     PostDetailView,
     PostCreateView,
     PostUpdateView,
-    PostDeleteView
+    PostDeleteView,
+    CommentCreateView, 
+    CommentUpdateView, 
+    CommentDeleteView  
 )
 
 urlpatterns = [
@@ -35,4 +38,4 @@ urlpatterns = [
 #     path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
 #     path('comments/<int:pk>/detail/', CommentDetailView.as_view(), name='comment-detail'),
 #     patgh('comments/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'),
-# ]
+]
