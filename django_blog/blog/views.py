@@ -2,12 +2,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm
+from .forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm, PostForm, CommentForm
 from .models import Profile # Importing Profile from blog.models
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from.forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm, PostForm
-from .models import Profile,Post
+from .models import Profile,Post, Comment
+from django.urls import reverse, reverse_lazy
 
 def register(request):
     if request.method == 'POST':
@@ -69,7 +70,7 @@ class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html' # Default: <app>/<model>_detail.html
     
-     def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Retrieve all comments related to the current post, ordered by creation time
         context['comments'] = self.object.comments.all()
@@ -142,9 +143,9 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     
     
     class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Comment
-    form_class = CommentForm
-    template_name = 'blog/comment_form.html' # Reusing the form template
+        model = Comment
+        form_class = CommentForm
+        template_name = 'blog/comment_form.html' # Reusing the form template
 
     def form_valid(self, form):
         # Display a success message after updating
@@ -212,3 +213,55 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         # Using reverse_lazy because the URL might not be available until the project's URLconf is fully loaded
         return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
 
+
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'  # Use the same template as for creation
+
+    def form_valid(self, form):
+        # Set the user of the comment before saving
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        # Ensure only the owner can update the comment
+        comment = self.get_object()
+        return self.request.user == comment.user
+
+    def get_success_url(self):
+        # Redirect to the post detail page after a successful update
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+    
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'  # Use the same template as for creation
+
+    def form_valid(self, form):
+        # Set the user of the comment before saving
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        # Ensure only the owner can update the comment
+        comment = self.get_object()
+        return self.request.user == comment.user
+
+    def get_success_url(self):
+        # Redirect to the post detail page after a successful update
+        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+    
+class CommentListView(ListView):
+    model = Comment
+    template_name = 'blog/comment_list.html'
+    context_object_name = 'comments'
+    ordering = ['-date_posted']
+    paginate_by = 10
+
+    def get_queryset(self):
+        # This assumes you want to filter comments by post, 
+        # so it expects a 'pk' in the URL kwargs
+        post_pk = self.kwargs.get('pk')
+        return Comment.objects.filter(post__pk=post_pk).order_by('-date_posted')

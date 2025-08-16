@@ -9,14 +9,15 @@ from .views import  (
     PostDeleteView,
     CommentCreateView, 
     CommentUpdateView, 
-    CommentDeleteView  
+    CommentDeleteView,
+    CommentListView,  
 )
 
 urlpatterns = [
     path('register/', views.register, name='register'),
     path('profile/', views.profile_view, name='profile'),
     # path('login/', views.login_view, name='login'),  # Assuming you have a login view
-    path('', PostListViews.as_views(), name='home'),  # Home page with list of posts
+    path('', PostListView.as_view(), name='home'),  # Home page with list of posts
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),  # Detail view for a single post
     path('post/new/', PostCreateView.as_view(), name='post-create'),  #
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),  # Update an existing post
@@ -34,7 +35,7 @@ urlpatterns = [
     # <int:pk> captures the primary key of the comment itself.
     path('comments/<int:pk>/edit/', CommentUpdateView.as_view(), name='comment-update'),
     # URL for deleting an existing comment.
-    <int:pk> captures the primary key of the comment itself.
+    # intpk> captures the primary key of the comment itself.
     path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
     path('comments/<int:pk>/detail/', CommentDetailView.as_view(), name='comment-detail'),
     path('comments/<int:pk>/update/', CommentUpdateView.as_view(), name='comment-update'),

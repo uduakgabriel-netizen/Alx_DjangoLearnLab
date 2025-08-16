@@ -1,4 +1,5 @@
 # blog/forms.py
+from .models import Comment  # Importing Comment model from blog.models
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
@@ -41,6 +42,16 @@ class PostForm(forms.ModelForm):
 #         model = Post  # Link this form to the Post model
 #         fields = ['title', 'content']
 
+# class Comment(models.Model):
+#     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+#     author = models.ForeignKey(User, on_delete=models.CASCADE)
+#     content = models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+
+#     def __str__(self):
+#         return f'Comment by {self.author.username} on {self.post.title}'
+
 
 
 class CommentForm(forms.ModelForm):
@@ -56,3 +67,6 @@ class CommentForm(forms.ModelForm):
         }
 
 
+# meta = {
+#     'model': Comment,
+# }
