@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from .models import Profile, Post # Now importing Profile from blog.models
+from taggit.forms import TagWidget
 
 # Custom form for user registration to include email
 class CustomUserCreationForm(UserCreationForm):
