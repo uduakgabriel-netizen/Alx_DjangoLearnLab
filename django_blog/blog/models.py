@@ -2,6 +2,8 @@
 from django.db import models
 from django.contrib.auth.models import User# Django's built-in User model
 from PIL import Image # Pillow library for image processing
+from django.utils import timezone
+from taggit.managers import TaggableManager # Import the TaggableManager
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -26,9 +28,14 @@ class Post(models.Model):
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    tags = TaggableManager(blank=True)  # Many-to-many relationship with tags
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse('post-detail', kwargs={'pk': self.pk})
+
 
     class Meta:
         ordering = ['-date_posted']  # Order posts by date posted, newest first
@@ -102,3 +109,53 @@ class Comment(models.Model):
         # Useful for redirects after creating/updating/deleting a comment,
         # usually leading back to the post's detail page.
         return reverse('post-detail', kwargs={'pk': self.post.pk})
+    
+    class Tag(models.Model):
+    """
+    Represents a tag that can be associated with blog posts.
+    Each tag has a unique name.
+    """
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        # Optional: Add a verbose name for the Tag model for better admin display
+        verbose_name = "Tag"
+        verbose_name_plural = "Tags"
+        # Optional: Order tags alphabetically by name by default
+        ordering = ['name']
+
+    def __str__(self):
+        """
+        String representation of the Tag, showing its name.
+        """
+        return self.name
+
+class Post(models.Model):
+    """
+    Represents a blog post, including title, content, author,
+    date posted, and a many-to-many relationship with tags.
+    """
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    date_posted = models.DateTimeField(default=timezone.now)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    # Establish a Many-to-Many relationship with the Tag model.
+    # 'blank=True' means a post doesn't have to have any tags.
+    tags = models.ManyToManyField(Tag, blank=True)
+
+    class Meta:
+        # Order posts by date_posted in descending order by default
+        ordering = ['-date_posted']
+
+    def __str__(self):
+        """
+        String representation of the Post, showing its title.
+        """
+        return self.title
+
+    def get_absolute_url(self):
+        """
+        Returns the URL to access a particular instance of the Post.
+        Used by Django's CreateView/UpdateView for redirection.
+        """
+        return reverse('post-detail', kwargs={'pk': self.pk})

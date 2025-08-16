@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'taggit',  # Taggit for tagging functionality
+    'crispy_forms',  # Optional: For better form rendering
     
 ]
 
