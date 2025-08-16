@@ -13,7 +13,7 @@ from .views import  (
     CommentListView,
     TaggedPostListView,
     search_view,
-     PostByTagListView
+    PostByTagListView
 )
 
 
