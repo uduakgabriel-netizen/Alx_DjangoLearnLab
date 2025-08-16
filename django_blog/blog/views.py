@@ -9,6 +9,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from.forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm, PostForm
 from .models import Profile,Post, Comment
 from django.urls import reverse, reverse_lazy
+from.taggit.models import Tag
+
 
 def register(request):
     if request.method == 'POST':
@@ -265,3 +267,41 @@ class CommentListView(ListView):
         # so it expects a 'pk' in the URL kwargs
         post_pk = self.kwargs.get('pk')
         return Comment.objects.filter(post__pk=post_pk).order_by('-date_posted')
+    
+    
+def search_view(request):
+    query = request.GET.get('q')  # Get the search term from the 'q' URL parameter
+    posts = Post.objects.all()
+
+    if query:
+        # Use Q objects for a complex lookup across multiple fields
+        posts = posts.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()  # Use .distinct() to avoid duplicate posts if they match multiple criteria
+
+    context = {
+        'posts': posts,
+        'query': query,
+    }
+    return render(request, 'blog/search_results.html', context)
+
+class TaggedPostListView(ListView):
+    model = Post
+    template_name = 'blog/home.html'  # You can reuse the home template
+    context_object_name = 'posts'
+    paginate_by = 5
+
+    def get_queryset(self):
+        # Get the tag from the URL kwargs
+        tag_slug = self.kwargs.get('slug')
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        # Filter posts that have this tag
+        return Post.objects.filter(tags__in=[tag])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add the tag to the context to display a header on the template
+        context['tag'] = get_object_or_404(Tag, slug=self.kwargs.get('slug'))
+        return context

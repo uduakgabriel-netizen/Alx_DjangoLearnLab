@@ -12,10 +12,16 @@
             <a href="{% url 'post-create' %}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg">
                 Create New Post
             </a>
+        <form class="form-inline my-2 my-lg-0" action="{% url 'search' %}" method="get">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
         </div>
     {% endif %}
 
     {% for post in posts %}
+
+    
         <article class="bg-white rounded-lg shadow-md p-6 mb-8 border border-gray-200 hover:shadow-lg transition duration-300">
             <div class="flex items-center mb-4">
                 <img class="w-12 h-12 rounded-full object-cover mr-4 border-2 border-blue-400" src="{{ post.author.profile.image.url }}" alt="{{ post.author.username }}'s Profile Picture">
