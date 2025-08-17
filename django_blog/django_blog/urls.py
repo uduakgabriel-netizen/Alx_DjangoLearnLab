@@ -8,7 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')), # Django's built-in auth URLs (login, logout, password reset, etc.)
-    path('accounts/', include('blog.urls')), # Your app's custom user URLs (for register and profile)
+    path('ac   counts/', include('blog.urls')), # Your app's custom user URLs (for register and profile)
     path('', TemplateView.as_view(template_name='index.html'), name='index'), # Simple home page
     path('blog/', include('blog.urls')), # Include your blog app's URLs
 ]
