@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import User # Import your custom User model
-from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.models import Token # NEW: Import Token
 
 class UserSerializer(serializers.ModelSerializer):
     """
@@ -16,14 +16,15 @@ class UserSerializer(serializers.ModelSerializer):
 class UserRegisterSerializer(serializers.ModelSerializer):
     """
     Serializer for user registration.
-    Handles creating a new user.
+    Handles creating a new user and returns user data along with a token.
     """
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
     password2 = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    token = serializers.SerializerMethodField(read_only=True) # NEW: Field to return the token
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'password2', 'bio', 'profile_picture')
+        fields = ('username', 'email', 'password', 'password2', 'bio', 'profile_picture', 'token') # NEW: Include 'token' in fields
         extra_kwargs = {
             'password': {'write_only': True},
         }
@@ -38,17 +39,30 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Creates and returns a new user instance, given the validated data.
+        Creates and returns a new user instance, given the validated data,
+        and generates an authentication token for the user.
         """
         validated_data.pop('password2') # Remove password2 as it's not a model field
         user = User.objects.create_user(
             username=validated_data['username'],
-            email=validated_data.get('email', ''), # Email can be optional
+            email=validated_data.get('email', ''),
             password=validated_data['password'],
             bio=validated_data.get('bio', ''),
             profile_picture=validated_data.get('profile_picture')
         )
+        # NEW: Create a token for the user immediately after creation
+        token, created = Token.objects.get_or_create(user=user)
+        user.auth_token_key = token.key # Store the token key temporarily on the user object for get_token method
         return user
+
+    def get_token(self, obj):
+        """
+        Returns the authentication token for the user object.
+        This method is called because 'token' is a SerializerMethodField.
+        """
+        # Retrieve the token key that was set in the create method
+        return getattr(obj, 'auth_token_key', None)
+
 
 class UserLoginSerializer(serializers.Serializer):
     """
@@ -57,6 +71,7 @@ class UserLoginSerializer(serializers.Serializer):
     """
     username = serializers.CharField(required=True)
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    token = serializers.SerializerMethodField(read_only=True) # NEW: Field to return the token
 
     def validate(self, data):
         """
@@ -75,5 +90,15 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg, code='authorization')
 
         data['user'] = user
+        # NEW: Get or create the token for the authenticated user and attach it
+        token, created = Token.objects.get_or_create(user=user)
+        data['token_key'] = token.key # Store the token key in validated data for get_token method
         return data
+
+    def get_token(self, obj):
+        """
+        Returns the authentication token from the validated data.
+        """
+        # The token_key is available in the serializer instance after validate()
+        return self.validated_data.get('token_key')
 
