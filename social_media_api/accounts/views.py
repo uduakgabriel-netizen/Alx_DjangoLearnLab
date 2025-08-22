@@ -1,46 +1,45 @@
-
-    
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.views import ObtainAuthToken # Still needed for base class
 from rest_framework.settings import api_settings
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer
-from .models import User # Import your custom User model
+from .models import User
 
 class RegisterAPIView(generics.CreateAPIView):
     """
     API view for user registration.
     Handles POST requests to create a new user and returns user data and a token.
+    The token is now returned by the serializer.
     """
     queryset = User.objects.all()
-    permission_classes = [permissions.AllowAny] # Anyone can register
+    permission_classes = [permissions.AllowAny]
     serializer_class = UserRegisterSerializer
 
-    def perform_create(self, serializer):
-        user = serializer.save()
-        Token.objects.get_or_create(user=user) # Create a token for the new user
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer) # This calls serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
 
-class LoginAPIView(ObtainAuthToken):
+    def perform_create(self, serializer):
+        serializer.save()
+
+class LoginAPIView(ObtainAuthToken): # Still inheriting from ObtainAuthToken for its base behavior
     """
     API view for user login.
     Handles POST requests to authenticate a user and returns a token.
-    Uses DRF's built-in ObtainAuthToken for token generation.
+    The token is now returned by the serializer.
     """
-    serializer_class = UserLoginSerializer # Use your custom login serializer
+    serializer_class = UserLoginSerializer
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'user_id': user.pk,
-            'email': user.email,
-            'username': user.username
-        })
+        # The token is now part of serializer.data
+        return Response(serializer.data)
+
 
 class UserProfileAPIView(generics.RetrieveUpdateAPIView):
     """
