@@ -19,7 +19,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     Serializer for user registration.
     Handles creating a new user and returns user data along with a token.
     """
+    # serializers.CharField() is used here for password
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    # serializers.CharField() is used here for password2
     password2 = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
     token = serializers.SerializerMethodField(read_only=True)
 
@@ -51,8 +53,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             bio=validated_data.get('bio', ''),
             profile_picture=validated_data.get('profile_picture')
         )
-        # UPDATED: Explicitly using Token.objects.create() for new user registration
-        token = Token.objects.create(user=user) # <-- Token.objects.create() is HERE!
+        token = Token.objects.create(user=user)
         user.auth_token_key = token.key
         return user
 
@@ -68,7 +69,9 @@ class UserLoginSerializer(serializers.Serializer):
     Serializer for user login.
     Takes username and password, authenticates, and returns user and token.
     """
+    # serializers.CharField() is used here for username
     username = serializers.CharField(required=True)
+    # serializers.CharField() is used here for password
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
     token = serializers.SerializerMethodField(read_only=True)
 
@@ -89,7 +92,6 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg, code='authorization')
 
         data['user'] = user
-        # Token.objects.get_or_create is appropriate here to retrieve existing token
         token, created = Token.objects.get_or_create(user=user)
         data['token_key'] = token.key
         return data
