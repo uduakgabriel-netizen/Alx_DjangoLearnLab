@@ -45,7 +45,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         Creates and returns a new user instance, given the validated data,
         and generates an authentication token for the user.
         """
-        validated_data.pop('password2') 
+        # validated_data.pop('password2') 
         user = get_user_model().objects.create_user( # UPDATED: Explicit get_user_model() call
             username=validated_data['username'],
             email=validated_data.get('email', ''),
