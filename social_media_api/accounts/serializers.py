@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework.authtoken.models import Token # Import Token
+from .models import post, Comment
 
 User = get_user_model() # Get the active user model
 
@@ -101,4 +102,23 @@ class UserLoginSerializer(serializers.Serializer):
         Returns the authentication token from the validated data.
         """
         return self.validated_data.get('token_key')
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'post', 'author', 'text', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
+
+# Serializer for the Post model
+class PostSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField(read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = post
+        fields = ['id', 'author', 'title', 'content', 'created_at', 'updated_at', 'comments']
+        # Similar to CommentSerializer, timestamps are read-only.
+        read_only_fields = ['created_at', 'updated_at']
 

@@ -22,8 +22,14 @@ from django.conf.urls.static import static # For media files
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')), # Include accounts app URLs
+    path('api/', include('posts.urls')), # Include your posts app URLs under an 'api/' prefix
+    path('api-auth/', include('rest_framework.urls')),
 ]
+
+
 
 # Serve media files during development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
+    
