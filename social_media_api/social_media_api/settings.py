@@ -137,4 +137,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-AUTH_USER_MODEL = 'accounts.User' # Point to your custom user model
+AUTH_USER_MODEL = 'accounts.customUser' # Point to your custom user model

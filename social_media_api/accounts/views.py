@@ -1,58 +1,72 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, status, permissions
 from rest_framework.response import Response
-from rest_framework.authtoken.views import ObtainAuthToken # Still needed for base class
-from rest_framework.settings import api_settings
-from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer
-from .models import User
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate, get_user_model
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.response import Response
 
-class RegisterAPIView(generics.CreateAPIView):
-    """
-    API view for user registration.
-    Handles POST requests to create a new user and returns user data and a token.
-    The token is now returned by the serializer.
-    """
-    queryset = User.objects.all()
-    permission_classes = [permissions.AllowAny]
-    serializer_class = UserRegisterSerializer
+from .models import CustomUser
+from .serializers import RegisterSerializer, LoginSerializer, TokenSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer) # This calls serializer.save()
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=201, headers=headers)
+class RegisterView(generics.CreateAPIView):
+  serializer_class = RegisterSerializer
+  permission_classes = [permissions.AllowAny]
 
-    def perform_create(self, serializer):
-        serializer.save()
+  def create(self, request, *args, **kwargs):
+    serializer = self.get_serializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = serializer.save()
+    token = Token.objects.get(user=user)
+    return Response({
+      'user': serializer.data,
+      'token': token.key
+    }, status=status.HTTP_201_CREATED)
 
-class LoginAPIView(ObtainAuthToken): # Still inheriting from ObtainAuthToken for its base behavior
-    """
-    API view for user login.
-    Handles POST requests to authenticate a user and returns a token.
-    The token is now returned by the serializer.
-    """
-    serializer_class = UserLoginSerializer
-    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+class LoginView(generics.GenericAPIView):
+  serializer_class = LoginSerializer
+  permission_classes = [permissions.AllowAny]
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        # The token is now part of serializer.data
-        return Response(serializer.data)
+  def post(self, request, *args, **kwargs):
+    serializer = self.get_serializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = authenticate(
+      username=serializer.validated_data['username'],
+      password=serializer.validated_data['password']
+    )
+    if user:
+      token, created = Token.objects.get_or_create(user=user)
+      return Response({'token': token.key})
+    return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
+class RetrieveTokenView(APIView):
+  def post(self, request):
+    user = request.user
+    token, created = Token.objects.get_or_create(user=user)
+    return Response({'token': token.key})
+    
 
-class UserProfileAPIView(generics.RetrieveUpdateAPIView):
-    """
-    API view for retrieving and updating the authenticated user's profile.
-    Requires authentication.
-    """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class FollowUserView(generics.GenericAPIView):
+    queryset = CustomUser.objects.all()
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self):
-        """
-        Returns the User instance for the currently authenticated user.
-        """
-        return self.request.user
+    def post(self, request, user_id):
+      try:
+        user_to_follow = get_user_model().objects.get(id=user_id)
+        request.user.following.add(user_to_follow)
+        return Response({'status': 'followed'}, status=status.HTTP_200_OK)
+      except get_user_model().DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
+class UnfollowUserView(generics.GenericAPIView):
+  queryset = CustomUser.objects.all()
+  permission_classes = [permissions.IsAuthenticated]
+
+  def post(self, request, user_id):
+    try:
+      user_to_unfollow = get_user_model().objects.get(id=user_id)
+      request.user.following.remove(user_to_unfollow)
+      return Response({'status': 'unfollowed'}, status=status.HTTP_200_OK)
+    except get_user_model().DoesNotExist:
+      return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
